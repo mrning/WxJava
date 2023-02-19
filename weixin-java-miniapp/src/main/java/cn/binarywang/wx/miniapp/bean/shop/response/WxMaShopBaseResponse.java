@@ -1,17 +1,17 @@
 package cn.binarywang.wx.miniapp.bean.shop.response;
 
 import com.google.gson.annotations.SerializedName;
-import java.io.Serializable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * @author leiin
- * @date 2021/3/23
- * @description:
+ * created on  2021/3/23
  */
 @Data
 public class WxMaShopBaseResponse implements Serializable {
-
   private static final long serialVersionUID = -4647161641538864187L;
 
   /**
@@ -21,7 +21,7 @@ public class WxMaShopBaseResponse implements Serializable {
    * </pre>
    */
   @SerializedName("errcode")
-  private Integer errcode;
+  private Integer errCode;
 
   /**
    * 错误信息
@@ -30,5 +30,5 @@ public class WxMaShopBaseResponse implements Serializable {
    * </pre>
    */
   @SerializedName("errmsg")
-  private String errmsg;
+  private String errMsg;
 }

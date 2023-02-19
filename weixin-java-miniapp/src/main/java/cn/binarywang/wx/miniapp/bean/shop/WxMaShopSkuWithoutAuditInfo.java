@@ -6,12 +6,10 @@ import lombok.Data;
 
 /**
  * @author leiin
- * @date 2021/3/23
- * @description:
+ * created on  2021/3/23
  */
 @Data
 public class WxMaShopSkuWithoutAuditInfo implements Serializable {
-
   private static final long serialVersionUID = 3354108922805323888L;
 
   /**

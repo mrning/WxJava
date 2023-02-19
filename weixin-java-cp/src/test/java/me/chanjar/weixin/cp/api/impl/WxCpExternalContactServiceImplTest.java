@@ -7,6 +7,7 @@ import me.chanjar.weixin.cp.api.ApiTestModule;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.bean.WxCpBaseResp;
 import me.chanjar.weixin.cp.bean.external.*;
+import me.chanjar.weixin.cp.bean.external.contact.WxCpExternalContactBatchInfo;
 import me.chanjar.weixin.cp.bean.external.contact.WxCpExternalContactInfo;
 import me.chanjar.weixin.cp.bean.external.msg.Attachment;
 import me.chanjar.weixin.cp.bean.external.msg.Image;
@@ -14,22 +15,31 @@ import me.chanjar.weixin.cp.bean.external.msg.Video;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.testng.collections.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.testng.Assert.assertNotNull;
 
+/**
+ * The type Wx cp external contact service impl test.
+ */
 @Guice(modules = ApiTestModule.class)
 public class WxCpExternalContactServiceImplTest {
   @Inject
   private WxCpService wxCpService;
+  /**
+   * The Config storage.
+   */
   @Inject
   protected ApiTestModule.WxXmlCpInMemoryConfigStorage configStorage;
   private final String userId = "someone" + System.currentTimeMillis();
 
+  /**
+   * Test get external contact.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testGetExternalContact() throws WxErrorException {
     String externalUserId = this.configStorage.getExternalUserId();
@@ -38,6 +48,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Test add contact way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testAddContactWay() throws WxErrorException {
 
@@ -54,6 +69,11 @@ public class WxCpExternalContactServiceImplTest {
     this.wxCpService.getExternalContactService().addContactWay(info);
   }
 
+  /**
+   * Test get contact way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testGetContactWay() throws WxErrorException {
     final String configId = "39fea3d93e30faaa8c7a9edd4cfe4d08";
@@ -62,6 +82,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(contactWayInfo);
   }
 
+  /**
+   * Test update contact way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testUpdateContactWay() throws WxErrorException {
     final String configId = "2d7a68c657663afbd1d90db19a4b5ee9";
@@ -77,6 +102,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(resp);
   }
 
+  /**
+   * Test del contact way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testDelContactWay() throws WxErrorException {
     final String configId = "2d7a68c657663afbd1d90db19a4b5ee9";
@@ -85,6 +115,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(resp);
   }
 
+  /**
+   * Test close temp chat.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testCloseTempChat() throws WxErrorException {
     final String externalUserId = "externalUserId";
@@ -92,6 +127,11 @@ public class WxCpExternalContactServiceImplTest {
     System.out.println(resp);
   }
 
+  /**
+   * Test list external contacts.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testListExternalContacts() throws WxErrorException {
     String userId = this.configStorage.getUserId();
@@ -100,6 +140,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(ret);
   }
 
+  /**
+   * Test list external with permission.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testListExternalWithPermission() throws WxErrorException {
     List<String> ret = this.wxCpService.getExternalContactService().listFollowers();
@@ -107,14 +152,39 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(ret);
   }
 
+  /**
+   * Test get contact detail.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testGetContactDetail() throws WxErrorException {
     String externalUserId = this.configStorage.getExternalUserId();
-    WxCpExternalContactInfo result = this.wxCpService.getExternalContactService().getContactDetail(externalUserId);
+    WxCpExternalContactInfo result = this.wxCpService.getExternalContactService().getContactDetail(externalUserId,
+      null);
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test get contact detail batch.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testGetContactDetailBatch() throws WxErrorException {
+    String userId = this.configStorage.getUserId();
+    WxCpExternalContactBatchInfo result =
+      this.wxCpService.getExternalContactService().getContactDetailBatch(new String[]{userId}, "", 100);
+    System.out.println(result);
+    assertNotNull(result);
+  }
+
+  /**
+   * Test get corp tag list.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testGetCorpTagList() throws WxErrorException {
     String[] tag = {};
@@ -123,19 +193,24 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Test add corp tag.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testAddCorpTag() throws WxErrorException {
 
     List<WxCpUserExternalTagGroupInfo.Tag> list = new ArrayList<>();
     WxCpUserExternalTagGroupInfo.Tag tag = new WxCpUserExternalTagGroupInfo.Tag();
     tag.setName("测试标签20");
-    tag.setOrder(1);
+    tag.setOrder(1L);
     list.add(tag);
 
     WxCpUserExternalTagGroupInfo tagGroupInfo = new WxCpUserExternalTagGroupInfo();
     WxCpUserExternalTagGroupInfo.TagGroup tagGroup = new WxCpUserExternalTagGroupInfo.TagGroup();
     tagGroup.setGroupName("其他");
-    tagGroup.setOrder(1);
+    tagGroup.setOrder(1L);
     tagGroup.setTag(list);
     tagGroupInfo.setTagGroup(tagGroup);
 
@@ -145,15 +220,26 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Test edit corp tag.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testEditCorpTag() throws WxErrorException {
 
-    WxCpBaseResp result = this.wxCpService.getExternalContactService().editCorpTag("et2omCCwAA6PtGsfeEOQMENl3Ub1FA6A", "未知6", 2);
+    WxCpBaseResp result = this.wxCpService.getExternalContactService().editCorpTag("et2omCCwAA6PtGsfeEOQMENl3Ub1FA6A"
+      , "未知6", 2);
 
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test del corp tag.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testDelCorpTag() throws WxErrorException {
 
@@ -166,6 +252,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Test mark tag.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testMarkTag() throws WxErrorException {
 
@@ -174,28 +265,46 @@ public class WxCpExternalContactServiceImplTest {
     String[] addTag = {"et2omCCwAAzdcSK-RV80YS9sbpCXlNlQ"};
     String[] removeTag = {};
 
-    WxCpBaseResp result = this.wxCpService.getExternalContactService().markTag(userid, externalUserid, addTag, removeTag);
+    WxCpBaseResp result = this.wxCpService.getExternalContactService().markTag(userid, externalUserid, addTag,
+      removeTag);
 
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test delete contact way.
+   */
   @Test
   public void testDeleteContactWay() {
   }
 
+  /**
+   * Test list followers.
+   */
   @Test
   public void testListFollowers() {
   }
 
+  /**
+   * Test list unassigned list.
+   */
   @Test
   public void testListUnassignedList() {
   }
 
+  /**
+   * Test transfer external contact.
+   */
   @Test
   public void testTransferExternalContact() {
   }
 
+  /**
+   * Test transfer customer.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testTransferCustomer() throws WxErrorException {
     WxCpUserTransferCustomerReq req = new WxCpUserTransferCustomerReq();
@@ -208,6 +317,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Test trnsfer result.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testTrnsferResult() throws WxErrorException {
     WxCpUserTransferResultResp result = this.wxCpService.getExternalContactService().transferResult("123", "234", "");
@@ -215,6 +329,11 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Testresigned transfer customer.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testresignedTransferCustomer() throws WxErrorException {
     WxCpUserTransferCustomerReq req = new WxCpUserTransferCustomerReq();
@@ -227,44 +346,105 @@ public class WxCpExternalContactServiceImplTest {
     assertNotNull(result);
   }
 
+  /**
+   * Testresigned trnsfer result.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testresignedTrnsferResult() throws WxErrorException {
-    WxCpUserTransferResultResp result = this.wxCpService.getExternalContactService().resignedTransferResult("123", "234", "");
+    WxCpUserTransferResultResp result = this.wxCpService.getExternalContactService().resignedTransferResult("123",
+      "234", "");
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test list group chat.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testListGroupChat() throws WxErrorException {
-    WxCpUserExternalGroupChatList result = this.wxCpService.getExternalContactService().listGroupChat(0, 100 ,0,new String[1],new String[1]);
+    WxCpUserExternalGroupChatList result = this.wxCpService.getExternalContactService().listGroupChat(0, 100, 0,
+      new String[1], new String[1]);
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test list group chat v 3.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testListGroupChatV3() throws WxErrorException {
+    WxCpUserExternalGroupChatList result = this.wxCpService.getExternalContactService().listGroupChat(100, "", 0,
+      new String[1]);
+    System.out.println(result);
+    assertNotNull(result);
+  }
+
+  /**
+   * Test get group chat.
+   */
   @Test
   public void testGetGroupChat() {
   }
 
+  /**
+   * Test transfer group chat.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testTransferGroupChat() throws WxErrorException {
     String[] str = {"wri1_QEAAATfnZl_VJ4hlQda0e4Mgf1A"};
-    WxCpUserExternalGroupChatTransferResp result = this.wxCpService.getExternalContactService().transferGroupChat(str, "123");
+    WxCpUserExternalGroupChatTransferResp result = this.wxCpService.getExternalContactService().transferGroupChat(str
+      , "123");
     System.out.println(result);
     assertNotNull(result);
   }
 
+  /**
+   * Test onjob transfer group chat.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testOnjobTransferGroupChat() throws WxErrorException {
+    String[] str = {"wrHlLKQAAAFbfB99-BO97YZlcywznGZg", "error_group_id"};
+    WxCpUserExternalGroupChatTransferResp result = this.wxCpService.getExternalContactService().onjobTransferGroupChat(str
+      , "x");
+    System.out.println(result);
+    assertNotNull(result);
+  }
+  /**
+   * Test get user behavior statistic.
+   */
   @Test
   public void testGetUserBehaviorStatistic() {
   }
 
+  /**
+   * Test get group chat statistic.
+   */
   @Test
   public void testGetGroupChatStatistic() {
   }
 
+  /**
+   * Test add msg template.
+   */
   @Test
   public void testAddMsgTemplate() {
   }
 
+  /**
+   * Test send welcome msg.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testSendWelcomeMsg() throws WxErrorException {
     Image image = new Image();
@@ -286,6 +466,11 @@ public class WxCpExternalContactServiceImplTest {
       .build());
   }
 
+  /**
+   * Test update remark.
+   *
+   * @throws WxErrorException the wx error exception
+   */
   @Test
   public void testUpdateRemark() throws WxErrorException {
     this.wxCpService.getExternalContactService().updateRemark(WxCpUpdateRemarkRequest.builder()
@@ -294,8 +479,108 @@ public class WxCpExternalContactServiceImplTest {
       .externalUserId("aaa")
       .remark("aa")
       .remarkCompany("aaa")
-      .remarkMobiles(new String[]{"111","222"})
+      .remarkMobiles(new String[]{"111", "222"})
       .remarkPicMediaId("aaa")
       .build());
+  }
+
+  /**
+   * Test get product list album.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testGetProductListAlbum() throws WxErrorException {
+    WxCpProductAlbumListResult result = this.wxCpService.getExternalContactService()
+      .getProductAlbumList(100, null);
+    System.out.println(result);
+    assertNotNull(result);
+    if (CollectionUtils.hasElements(result.getProductList())) {
+      WxCpProductAlbumResult result1 =
+        this.wxCpService.getExternalContactService().getProductAlbum(result.getProductList().get(0).getProductId());
+      System.out.println(result1);
+      assertNotNull(result1);
+    }
+  }
+
+  /**
+   * Test get moment list.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testGetMomentList() throws WxErrorException {
+    WxCpGetMomentList result = this.wxCpService.getExternalContactService()
+      .getMomentList(1636732800L, 1636991999L, null, null, null, null);
+    System.out.println(result);
+    assertNotNull(result);
+  }
+
+  /**
+   * Test add join way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testAddJoinWay() throws WxErrorException {
+
+
+    WxCpGroupJoinWayInfo.JoinWay joinWay = new WxCpGroupJoinWayInfo.JoinWay();
+    joinWay.setChatIdList(Collections.singletonList("wrfpBaCwAAxR-iIqIUa5vvbpZQcAexJA"));
+    joinWay.setScene(2);
+    joinWay.setAutoCreateRoom(1);
+    joinWay.setRemark("CreateDate:" + DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+
+    WxCpGroupJoinWayInfo info = new WxCpGroupJoinWayInfo();
+    info.setJoinWay(joinWay);
+    this.wxCpService.getExternalContactService().addJoinWay(info);
+  }
+
+  /**
+   * Test update join way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testUpdateJoinWay() throws WxErrorException {
+
+    final String configId = "";
+
+    WxCpGroupJoinWayInfo.JoinWay joinWay = new WxCpGroupJoinWayInfo.JoinWay();
+    joinWay.setConfigId(configId);
+    joinWay.setChatIdList(Collections.singletonList("wrfpBaCwAAxR-iIqIUa5vvbpZQcAexJA"));
+    joinWay.setScene(2);
+    joinWay.setAutoCreateRoom(1);
+    joinWay.setRemark("CreateDate:" + DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(new Date()));
+
+    WxCpGroupJoinWayInfo info = new WxCpGroupJoinWayInfo();
+    info.setJoinWay(joinWay);
+    this.wxCpService.getExternalContactService().updateJoinWay(info);
+  }
+
+  /**
+   * Test del join way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testDelJoinWay() throws WxErrorException {
+
+    final String configId = "";
+
+    this.wxCpService.getExternalContactService().delJoinWay(configId);
+  }
+
+  /**
+   * Test get join way.
+   *
+   * @throws WxErrorException the wx error exception
+   */
+  @Test
+  public void testGetJoinWay() throws WxErrorException {
+
+    final String configId = "";
+
+    this.wxCpService.getExternalContactService().getJoinWay(configId);
   }
 }

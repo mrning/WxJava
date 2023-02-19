@@ -32,6 +32,7 @@ import me.chanjar.weixin.mp.api.*;
 import me.chanjar.weixin.mp.bean.WxMpSemanticQuery;
 import me.chanjar.weixin.mp.bean.result.WxMpCurrentAutoReplyInfo;
 import me.chanjar.weixin.mp.bean.result.WxMpSemanticQueryResult;
+import me.chanjar.weixin.mp.bean.result.WxMpShortKeyResult;
 import me.chanjar.weixin.mp.config.WxMpConfigStorage;
 import me.chanjar.weixin.mp.enums.WxMpApiUrl;
 import me.chanjar.weixin.mp.util.WxMpConfigStorageHolder;
@@ -86,7 +87,7 @@ public abstract class BaseWxMpServiceImpl<H, P> implements WxMpService, RequestH
   private WxMpTemplateMsgService templateMsgService = new WxMpTemplateMsgServiceImpl(this);
   @Getter
   @Setter
-  private final WxMpSubscribeMsgService subscribeMsgService = new WxMpSubscribeMsgServiceImpl(this);
+  private WxMpSubscribeMsgService subscribeMsgService = new WxMpSubscribeMsgServiceImpl(this);
   @Getter
   @Setter
   private WxMpDeviceService deviceService = new WxMpDeviceServiceImpl(this);
@@ -104,7 +105,7 @@ public abstract class BaseWxMpServiceImpl<H, P> implements WxMpService, RequestH
   private WxMpAiOpenService aiOpenService = new WxMpAiOpenServiceImpl(this);
   @Getter
   @Setter
-  private final WxMpWifiService wifiService = new WxMpWifiServiceImpl(this);
+  private WxMpWifiService wifiService = new WxMpWifiServiceImpl(this);
   @Getter
   @Setter
   private WxMpMarketingService marketingService = new WxMpMarketingServiceImpl(this);
@@ -145,10 +146,36 @@ public abstract class BaseWxMpServiceImpl<H, P> implements WxMpService, RequestH
   @Setter
   private WxMpReimburseInvoiceService reimburseInvoiceService = new WxMpReimburseInvoiceServiceImpl(this);
 
+  @Getter
+  @Setter
+  private WxMpDraftService draftService = new WxMpDraftServiceImpl(this);
+
+  @Getter
+  @Setter
+  private WxMpFreePublishService freePublishService = new WxMpFreePublishServiceImpl(this);
+
   private Map<String, WxMpConfigStorage> configStorageMap;
 
   private int retrySleepMillis = 1000;
   private int maxRetryTimes = 5;
+
+  @Override
+  public String genShorten(String longData, Integer expireSeconds) throws WxErrorException {
+    JsonObject param = new JsonObject();
+    param.addProperty("long_data", longData);
+    param.addProperty("expire_seconds", expireSeconds);
+    String responseContent = this.post(GEN_SHORTEN_URL, param.toString());
+    JsonObject tmpJsonObject = GsonParser.parse(responseContent);
+    return tmpJsonObject.get("short_key").getAsString();
+  }
+
+  @Override
+  public WxMpShortKeyResult fetchShorten(String shortKey) throws WxErrorException {
+    JsonObject param = new JsonObject();
+    param.addProperty("short_key", shortKey);
+    String responseContent = this.post(FETCH_SHORTEN_URL, param.toString());
+    return WxMpShortKeyResult.fromJson(responseContent);
+  }
 
   @Override
   public boolean checkSignature(String timestamp, String nonce, String signature) {
@@ -408,12 +435,12 @@ public abstract class BaseWxMpServiceImpl<H, P> implements WxMpService, RequestH
       }
 
       if (error.getErrorCode() != 0) {
-        log.error("\n【请求地址】: {}\n【请求参数】：{}\n【错误信息】：{}", uriWithAccessToken, dataForLog, error);
+        log.warn("\n【请求地址】: {}\n【请求参数】：{}\n【错误信息】：{}", uriWithAccessToken, dataForLog, error);
         throw new WxErrorException(error, e);
       }
       return null;
     } catch (IOException e) {
-      log.error("\n【请求地址】: {}\n【请求参数】：{}\n【异常信息】：{}", uriWithAccessToken, dataForLog, e.getMessage());
+      log.warn("\n【请求地址】: {}\n【请求参数】：{}\n【异常信息】：{}", uriWithAccessToken, dataForLog, e.getMessage());
       throw new WxErrorException(e);
     }
   }
@@ -442,6 +469,10 @@ public abstract class BaseWxMpServiceImpl<H, P> implements WxMpService, RequestH
   @Override
   public void setWxMpConfigStorage(WxMpConfigStorage wxConfigProvider) {
     final String defaultMpId = wxConfigProvider.getAppId();
+    if (defaultMpId == null) {
+      throw new WxRuntimeException("appid不能设置为null");
+    }
+
     this.setMultiConfigStorages(ImmutableMap.of(defaultMpId, wxConfigProvider), defaultMpId);
   }
 

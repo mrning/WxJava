@@ -19,6 +19,10 @@ public class WxMaUserInfo implements Serializable {
   private String province;
   private String country;
   private String avatarUrl;
+  /**
+   * 不绑定开放平台不会返回这个字段
+   */
+  private String unionId;
   private Watermark watermark;
 
   public static WxMaUserInfo fromJson(String json) {

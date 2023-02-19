@@ -2,15 +2,17 @@ package me.chanjar.weixin.cp.bean;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.chanjar.weixin.cp.util.json.WxCpGsonBuilder;
 
 /**
+ * The type Wx cp tp user detail.
  *
  * @author huangxiaoming
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class WxCpTpUserDetail extends WxCpBaseResp {
-
   private static final long serialVersionUID = -5028321625140879571L;
   /**
    * 用户所属企业的corpid
@@ -48,6 +50,12 @@ public class WxCpTpUserDetail extends WxCpBaseResp {
   @SerializedName("qr_code")
   private String qrCode;
 
+  /**
+   * From json wx cp tp user detail.
+   *
+   * @param json the json
+   * @return the wx cp tp user detail
+   */
   public static WxCpTpUserDetail fromJson(String json) {
     return WxCpGsonBuilder.create().fromJson(json, WxCpTpUserDetail.class);
   }

@@ -10,16 +10,24 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author yqx
- * @date 2020/3/116
+ * The type Wx cp user external group chat list.
+ *
+ * @author yqx  created on  2020/3/116
  */
 @Getter
 @Setter
 public class WxCpUserExternalGroupChatList extends WxCpBaseResp {
+  private static final long serialVersionUID = 1907272035492110236L;
 
   @SerializedName("group_chat_list")
   private List<ChatStatus> groupChatList;
 
+  @SerializedName("next_cursor")
+  private String nextCursor;
+
+  /**
+   * The type Chat status.
+   */
   @Getter
   @Setter
   public static class ChatStatus implements Serializable {
@@ -42,6 +50,12 @@ public class WxCpUserExternalGroupChatList extends WxCpBaseResp {
 
   }
 
+  /**
+   * From json wx cp user external group chat list.
+   *
+   * @param json the json
+   * @return the wx cp user external group chat list
+   */
   public static WxCpUserExternalGroupChatList fromJson(String json) {
     return WxCpGsonBuilder.create().fromJson(json, WxCpUserExternalGroupChatList.class);
   }

@@ -1,10 +1,17 @@
 package me.chanjar.weixin.cp.bean.external.msg;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 import me.chanjar.weixin.cp.constant.WxCpConsts;
 
 import java.io.Serializable;
 
+/**
+ * The type Attachment.
+ *
+ * @author chutian0124
+ */
+@Data
 public class Attachment implements Serializable {
   private static final long serialVersionUID = -8078748379570640198L;
 
@@ -15,62 +22,60 @@ public class Attachment implements Serializable {
 
   private Link link;
 
-  private MiniProgram miniprogram;
+  @SerializedName("miniprogram")
+  private MiniProgram miniProgram;
 
   private Video video;
 
-  @Override
-  public String toString() {
-    return "Attachment{" +
-      "msgType='" + msgType + '\'' +
-      ", image=" + image +
-      ", link=" + link +
-      ", miniprogram=" + miniprogram +
-      ", video=" + video +
-      '}';
-  }
+  private File file;
 
-  private String getMsgType() {
-    return msgType;
-  }
-
-  private void setMsgType(String msgType) {
-    this.msgType = msgType;
-  }
-
-  public Image getImage() {
-    return image;
-  }
-
+  /**
+   * Sets image.
+   *
+   * @param image the image
+   */
   public void setImage(Image image) {
     this.image = image;
     this.msgType = WxCpConsts.WelcomeMsgType.IMAGE;
   }
 
-  public Link getLink() {
-    return link;
-  }
-
+  /**
+   * Sets link.
+   *
+   * @param link the link
+   */
   public void setLink(Link link) {
     this.link = link;
     this.msgType = WxCpConsts.WelcomeMsgType.LINK;
   }
 
-  public MiniProgram getMiniprogram() {
-    return miniprogram;
-  }
-
-  public void setMiniprogram(MiniProgram miniprogram) {
-    this.miniprogram = miniprogram;
+  /**
+   * Sets mini program.
+   *
+   * @param miniProgram the mini program
+   */
+  public void setMiniProgram(MiniProgram miniProgram) {
+    this.miniProgram = miniProgram;
     this.msgType = WxCpConsts.WelcomeMsgType.MINIPROGRAM;
   }
 
-  public Video getVideo() {
-    return video;
-  }
-
+  /**
+   * Sets video.
+   *
+   * @param video the video
+   */
   public void setVideo(Video video) {
     this.video = video;
     this.msgType = WxCpConsts.WelcomeMsgType.VIDEO;
+  }
+
+  /**
+   * Sets file.
+   *
+   * @param file the file
+   */
+  public void setFile(File file) {
+    this.file = file;
+    this.msgType = WxCpConsts.WelcomeMsgType.FILE;
   }
 }

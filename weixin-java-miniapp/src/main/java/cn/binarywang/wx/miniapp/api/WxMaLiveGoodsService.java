@@ -23,6 +23,8 @@ public interface WxMaLiveGoodsService {
    * 注意：开发者必须保存【商品ID】与【审核单ID】，如果丢失，则无法调用其他相关接口
    * 调用额度：500次/一天
    * http请求方式：POST https://api.weixin.qq.com/wxaapi/broadcast/goods/add?access_token=ACCESS_TOKEN
+   *
+   * 文档地址：https://developers.weixin.qq.com/miniprogram/dev/framework/liveplayer/commodity-api.html#1
    * </pre>
    *
    * @param goods 商品
@@ -112,4 +114,32 @@ public interface WxMaLiveGoodsService {
    * @throws WxErrorException .
    */
   WxMaLiveResult getApprovedGoods(Integer offset, Integer limit, Integer status) throws WxErrorException;
+
+  /**
+   * 直播挂件设置全局key
+   * <pre>
+   * 若已设置此全局key，且添加商品时未指定goodsKey字段，则我们会使用此全局key作为该商品的goodsKey。 须注意的是，若全局key已设定，并添加了未指定goodsKey字段的商品之后，再重新设定不一样的全局key则会导致先前的映射失效。 为了避免映射失效，建议全局key只设定一次。
+   * 注意：key必须为字符串数组
+   * 调用额度：500次/一天
+   * http请求方式：POST https://api.weixin.qq.com/wxaapi/broadcast/goods/setkey?access_token=
+   * </pre>
+   *
+   * @param goodsKey 全局key
+   * @return 设置是否成功
+   * @throws WxErrorException .
+   */
+  boolean setKey(List<String> goodsKey) throws WxErrorException;
+
+  /**
+   * 查看当前设定的全局key
+   * <pre>
+   * 查看当前设定的全局key。
+   * 调用额度：500次/一天
+   * http请求方式：GET https://api.weixin.qq.com/wxaapi/broadcast/goods/getkey?access_token=
+   * </pre>
+   *
+   * @return 全局key
+   * @throws WxErrorException .
+   */
+  List<String> getKey() throws WxErrorException;
 }
